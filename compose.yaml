@@ -1,6 +1,6 @@
 services:
   web:
-    image: username/image:tag
+    image: jluisalvarez/node-webapp:2026
     depends_on:
       - mongo
     deploy:

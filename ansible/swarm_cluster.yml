@@ -1,0 +1,35 @@
+- name: Inicializar Swarm en manager
+  hosts: manager
+  become: yes
+
+  tasks:
+
+    - name: Inicializar swarm
+      command: docker swarm init --advertise-addr {{ ansible_host }}
+      ignore_errors: yes
+
+    - name: Obtener token worker
+      command: docker swarm join-token -q worker
+      register: token
+
+    - name: Guardar token como fact
+      set_fact:
+        swarm_token: "{{ token.stdout }}"
+
+# 👇 MISMA ejecución, ahora sí funciona hostvars
+- name: Unir workers al cluster
+  hosts: worker
+  become: yes
+
+  vars:
+    manager_ip: "{{ hostvars[groups['manager'][0]].ansible_host }}"
+    token: "{{ hostvars[groups['manager'][0]].swarm_token }}"
+
+  tasks:
+
+    - name: Join swarm
+      command: >
+        docker swarm join
+        --token {{ token }}
+        {{ manager_ip }}:2377
+      ignore_errors: yes

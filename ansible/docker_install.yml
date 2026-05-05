@@ -1,0 +1,42 @@
+- name: Instalar Docker
+  hosts: all
+  become: yes
+
+  tasks:
+    - apt:
+        update_cache: yes
+
+    - apt:
+        name:
+          - docker.io
+        state: present
+
+    - service:
+        name: docker
+        state: started
+        enabled: yes
+        
+
+- name: Añadir usuario al grupo docker
+  hosts: all
+  become: yes
+
+  vars:
+    docker_user: ubuntu
+
+  tasks:
+
+    - name: Asegurar que el grupo docker existe
+      group:
+        name: docker
+        state: present
+
+    - name: Añadir usuario al grupo docker
+      user:
+        name: "{{ docker_user }}"
+        groups: docker
+        append: yes
+
+    - name: Reiniciar sesión SSH (aviso)
+      debug:
+        msg: "El usuario {{ docker_user }} debe cerrar sesión y volver a entrar para aplicar los cambios"

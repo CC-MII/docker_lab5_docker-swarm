@@ -1,0 +1,21 @@
+plugin: amazon.aws.aws_ec2
+
+profile: default
+
+regions:
+  - us-east-1
+  
+filters:
+  "tag:Project": swarm
+  
+
+    
+keyed_groups:
+  - key: tags.Role
+    separator: ''
+
+
+compose:
+  ansible_host: public_ip_address
+
+strict: False
