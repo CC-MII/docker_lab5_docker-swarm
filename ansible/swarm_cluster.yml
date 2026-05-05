@@ -16,7 +16,6 @@
       set_fact:
         swarm_token: "{{ token.stdout }}"
 
-# 👇 MISMA ejecución, ahora sí funciona hostvars
 - name: Unir workers al cluster
   hosts: worker
   become: yes
